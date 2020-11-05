@@ -1,23 +1,48 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 
+const Recommend = (resolve) => {
+  import('../views/Recommend').then((module) => {
+    resolve(module)
+  })
+}
+const Detail = (resolve) => {
+  import('../views/Detail').then((module) => {
+    resolve(module)
+  })
+}
+const Search = (resolve) => {
+  import('../views/Search.vue').then((module) => {
+    resolve(module)
+  })
+}
+const Rank = (resolve) => {
+  import('../views/Rank.vue').then((module) => {
+    resolve(module)
+  })
+}
+const Singer = (resolve) => {
+  import('../views/Singer.vue').then((module) => {
+    resolve(module)
+  })
+}
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', redirect: '/recommend' }, // 默认为/recommend，导入Recommend组件
+  { path: '/rank', component: Rank },
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '/recommend',
+    component: Recommend,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        component: Detail
+      }
+    ]
   },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+  { path: '/search', component: Search },
+  { path: '/singer', component: Singer }
 ]
 
 const router = new VueRouter({
