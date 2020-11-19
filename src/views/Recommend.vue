@@ -13,6 +13,7 @@
         </ScrollView>
       </div>
       <transition>
+        <!-- 路由匹配到的组件将渲染在这里 -->
           <router-view></router-view>
       </transition>
     </div>
@@ -94,6 +95,16 @@ export default {
     }
   }
 }
+/***
+ 歌单推荐板块分为：
+ 1.Banner组件：使用swiper完成轮播效果
+ 2.Personalized组件的复用：
+    1) 推荐歌单
+    2) 最新专辑
+  @select="fatherSelectItem"，其中Recommend父组件通过select将fatherSelectItem函数与子组件关联
+  而Personalized子组件将函数selectItem通过select发到父组件，子组件中的点击事件传入id以及带入this.type(type由父组件通过v-bind传入)
+ 3.NewSongs组件
+ ***/
 </script>
 
 <style scoped lang="scss">

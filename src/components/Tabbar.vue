@@ -19,6 +19,12 @@
 export default {
   name: 'Tabbar'
 }
+/***
+ Tabbar分为：
+ 路由重定向/recommend，默认加载Recommend组件
+ router-link相当于a链接
+ tabbar通过flex横向布局为四部分： 推荐、歌手、排行、搜索
+ ***/
 </script>
 
 <style lang="scss" scoped>

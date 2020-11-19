@@ -1,6 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+// 注意点: 通过 improt xxx from xxx的方式加载组件, 无论组件有没有被用到, 都会被加载进来，影响性能
+// import Recommend from '../views/Recommend'
+// import Singer from '../views/Singer'
+// import Rank from '../views/Rank'
+// import Search from '../views/Search'
+// 以下是vue组件的按需加载，通过import异步加载
 const Recommend = (resolve) => {
   import('../views/Recommend').then((module) => {
     resolve(module)

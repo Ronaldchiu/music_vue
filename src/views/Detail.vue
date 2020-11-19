@@ -1,6 +1,6 @@
 <template>
     <div class="detail">
-      <SubHeader :title="playlist.name"></SubHeader>
+      <DetailHeader :title="playlist.name"></DetailHeader>
       <DetailTop :path="playlist.coverImgUrl" ref="top"></DetailTop>
       <div class="bottom">
         <ScrollView ref="scrollview">
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import SubHeader from '../components/SubHeader'
+import DetailHeader from '../components/Detail/DetailHeader'
 import DetailTop from '../components/Detail/DetailTop'
 import DetailBottom from '../components/Detail/DetailBottom'
 import ScrollView from '../components/ScrollView'
@@ -20,7 +20,7 @@ import { getPlayList, getAlbum } from '../api/index'
 export default {
   name: 'Detail',
   components: {
-    SubHeader,
+    DetailHeader,
     DetailTop,
     DetailBottom,
     ScrollView
@@ -62,15 +62,16 @@ export default {
       // console.log(offsetY)
       if (offsetY < 0) {
         console.log('向上滚动')
-        const scale = 20 * Math.abs(offsetY) / defaultHeight
-        // const scale = Math.abs(offsetY) / defaultHeight
-        // console.log(scale)
-        // this.$refs.top.changeMask(scale)
+        // const scale = 20 * Math.abs(offsetY) / defaultHeight
+        const scale = Math.abs(offsetY) / defaultHeight
+        console.log(scale)
+        this.$refs.top.changeMask(scale)
         /*
         注意点: 高斯模糊效果是非常消耗性能的, 不推荐在移动端中使用
                 如果非要在移动端中使用, 那么建议只设置一次
         * */
-        this.$refs.top.$el.style.filter = `blur(${scale}px)`
+        // this.$refs.top.$el.style.filter = `blur(${scale}px)` // 高斯模糊
+        // this.$refs.top.changeMask(scale)
       } else {
         console.log('向下滚动')
         const scale = 1 + offsetY / defaultHeight

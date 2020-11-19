@@ -24,12 +24,10 @@ export default {
   },
   methods: {
     ...mapActions([
-      'setFullScreen',
-      'setSongDetail'
+      'setFullScreen'
     ]),
     selectMusic (id) {
       this.setFullScreen(true)
-      this.setSongDetail([id])
     }
   }
 }
