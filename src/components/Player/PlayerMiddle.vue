@@ -1,7 +1,7 @@
 <template>
   <swiper :options="swiperOption" class="banner">
     <swiper-slide class="cd">
-      <div class="cd-wrapper">
+      <div class="cd-wrapper" ref="cdWrapper">
         <img src="https://p1.music.126.net/DOZHRkXE1sZCM6mWCky5KQ==/109951165188090916.jpg" alt="">
       </div>
       <p>such a big surprise</p>
@@ -70,6 +70,8 @@
 import 'swiper/swiper-bundle.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import ScrollView from '../ScrollView'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'PlayerMiddle',
   components: {
@@ -91,6 +93,20 @@ export default {
         observeSlideChildren: true
       },
       currentLineNum: '0'
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'isPlaying'
+    ])
+  },
+  watch: {
+    isPlaying (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.cdWrapper.classList.add('active')
+      } else {
+        this.$refs.cdWrapper.classList.remove('active')
+      }
     }
   }
 }
@@ -114,6 +130,11 @@ export default {
       border-radius: 50%;
       border: 30px solid #fff;
       overflow: hidden;
+      animation: sport 3s linear infinite;
+      animation-play-state: paused;
+      &.active {
+        animation-play-state: running;
+      }
       img {
         width: 100%;
         height: 100%;
@@ -140,7 +161,14 @@ export default {
       }
     }
   }
-
+}
+@keyframes sport {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
 <style lang="scss">

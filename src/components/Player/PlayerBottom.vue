@@ -14,9 +14,9 @@
         <span ref="eleTotalTime">00:00</span>
       </div>
       <div class="bottom-controll">
-        <div class="mode loop" ref="mode"></div>
+        <div class="mode loop" @click="mode" ref="mode"></div>
         <div class="prev"></div>
-        <div class="play" ref="play"></div>
+        <div class="play" @click="play" ref="play"></div>
         <div class="next" ></div>
         <div class="favorite"></div>
       </div>
@@ -24,7 +24,10 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import modeType from '../../store/modeType'
 import { formartTime } from '../../tools/tools'
+
 export default {
   name: 'PlayerBottom',
   // props: {
@@ -51,9 +54,44 @@ export default {
       // 2.根据当前播放的时间计算比例
       const value = newValue / this.totalTime * 100
       this.$refs.progressLine.style.width = value + '%'
+    },
+    isPlaying (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.play.classList.add('active')
+      } else {
+        this.$refs.play.classList.remove('active')
+      }
+    },
+    modeType (newValue, oldValue) {
+      if (newValue === modeType.loop) {
+        this.$refs.mode.classList.remove('random')
+        this.$refs.mode.classList.add('loop')
+      } else if (newValue === modeType.one) {
+        this.$refs.mode.classList.remove('loop')
+        this.$refs.mode.classList.add('one')
+      } else if (newValue === modeType.random) {
+        this.$refs.mode.classList.remove('one')
+        this.$refs.mode.classList.add('random')
+      }
     }
   },
   methods: {
+    ...mapActions([
+      'setIsPlaying',
+      'setModeType'
+    ]),
+    play () {
+      this.setIsPlaying(!this.isPlaying)
+    },
+    mode () {
+      if (this.modeType === modeType.loop) {
+        this.setModeType(modeType.one)
+      } else if (this.modeType === modeType.one) {
+        this.setModeType(modeType.random)
+      } else if (this.modeType === modeType.random) {
+        this.setModeType(modeType.loop)
+      }
+    },
     progressClick (e) {
       // 1. 计算进度条的位置
       const normalLeft = this.$refs.progressBar.offsetLeft // 进度条的总长
@@ -68,6 +106,12 @@ export default {
       const currentTime = this.totalTime * value
       console.log(currentTime)
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isPlaying',
+      'modeType'
+    ])
   }
 }
 </script>
@@ -139,9 +183,9 @@ export default {
       @include bg_img('../../assets/images/prev')
     }
     .play{
-      @include bg_img('../../assets/images/play');
+      @include bg_img('../../assets/images/pause');
       &.active{
-        @include bg_img('../../assets/images/pause');
+        @include bg_img('../../assets/images/play');
       }
     }
     .next{

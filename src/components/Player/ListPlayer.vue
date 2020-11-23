@@ -8,8 +8,10 @@
       <div class="player-wrapper">
         <div class="player-top">
           <div class="top-left">
-            <div class="mode"></div>
-            <p>顺序播放</p>
+            <div class="mode loop" @click="mode" ref="mode"></div>
+            <p v-if="this.modeType === 0">顺序播放</p>
+            <p v-else-if="this.modeType === 1">单曲播放</p>
+            <p v-else>随机播放</p>
           </div>
           <div class="top-right">
             <div class="del"></div>
@@ -20,7 +22,7 @@
             <ul>
               <li class="item">
                 <div class="item-left">
-                    <div class="item-play"></div>
+                    <div class="item-play" @click="play" ref="play"></div>
                     <p>演员</p>
                 </div>
                 <div class="item-right">
@@ -60,6 +62,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import modeType from '../../store/modeType'
 import ScrollView from '../ScrollView'
 import Velocity from 'velocity-animate'
 import 'velocity-animate/velocity.ui'
@@ -73,7 +77,53 @@ export default {
   components: {
     ScrollView
   },
+  watch: {
+    isPlaying (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.play.classList.add('active')
+      } else {
+        this.$refs.play.classList.remove('active')
+      }
+    },
+    modeType (newValue, oldValue) {
+      if (newValue === modeType.loop) {
+        this.$refs.mode.classList.remove('random')
+        this.$refs.mode.classList.add('loop')
+      } else if (newValue === modeType.one) {
+        this.$refs.mode.classList.remove('loop')
+        this.$refs.mode.classList.add('one')
+      } else if (newValue === modeType.random) {
+        this.$refs.mode.classList.remove('one')
+        this.$refs.mode.classList.add('random')
+      }
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'isShowMiniPlayer',
+      'isPlaying',
+      'modeType'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'setFullScreen',
+      'setMiniPlayer',
+      'setIsPlaying',
+      'setModeType'
+    ]),
+    play () {
+      this.setIsPlaying(!this.isPlaying)
+    },
+    mode () {
+      if (this.modeType === modeType.loop) {
+        this.setModeType(modeType.one)
+      } else if (this.modeType === modeType.one) {
+        this.setModeType(modeType.random)
+      } else if (this.modeType === modeType.random) {
+        this.setModeType(modeType.loop)
+      }
+    },
     show () {
       this.isShowListPlayer = true
     },
@@ -121,7 +171,15 @@ export default {
           width: 56px;
           height: 56px;
           margin-right: 20px;
-          @include bg_img('../../assets/images/small_loop')
+          &.loop{
+            @include bg_img('../../assets/images/small_loop')
+          }
+          &.one{
+            @include bg_img('../../assets/images/small_one')
+          }
+          &.random{
+            @include bg_img('../../assets/images/small_shuffle')
+          }
         }
         p{
           @include font_size($font_medium_s);
@@ -153,7 +211,10 @@ export default {
             width: 56px;
             height: 56px;
             margin-right: 20px;
-            @include bg_img('../../assets/images/small_play')
+            @include bg_img('../../assets/images/small_pause');
+            &.active {
+              @include bg_img('../../assets/images/small_play');
+            }
           }
           p {
             width: 80%;
