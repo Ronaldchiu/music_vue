@@ -14,47 +14,27 @@
             <p v-else>随机播放</p>
           </div>
           <div class="top-right">
-            <div class="del"></div>
+            <div class="del" @click="delAll"></div>
           </div>
         </div>
         <div class="player-middle">
-          <ScrollView>
-            <ul>
-              <li class="item">
+          <ScrollView ref="scrollView">
+            <ul ref="play">
+              <li class="item" v-for="(value, index) in songs" :key="value.id" @click="selectMusic(index)">
                 <div class="item-left">
-                    <div class="item-play" @click="play" ref="play"></div>
-                    <p>演员</p>
+                    <div class="item-play" @click.stop="play" v-show="currentIndex === index"></div>
+                    <p>{{value.name}}</p>
                 </div>
                 <div class="item-right">
                     <div class="item-favorite"></div>
-                    <div class="item-del"></div>
-                </div>
-              </li>
-              <li class="item">
-                <div class="item-left">
-                    <div class="item-play"></div>
-                    <p>演员</p>
-                </div>
-                <div class="item-right">
-                    <div class="item-favorite"></div>
-                    <div class="item-del"></div>
-                </div>
-              </li>
-              <li class="item">
-                <div class="item-left">
-                    <div class="item-play"></div>
-                    <p>演员</p>
-                </div>
-                <div class="item-right">
-                    <div class="item-favorite"></div>
-                    <div class="item-del"></div>
+                    <div class="item-del" @click.stop="del(index)"></div>
                 </div>
               </li>
             </ul>
           </ScrollView>
         </div>
         <div class="player-bottom">
-          <p @click="hidden">关闭</p>
+          <p @click.stop="hidden">关闭</p>
         </div>
       </div>
     </div>
@@ -69,11 +49,6 @@ import Velocity from 'velocity-animate'
 import 'velocity-animate/velocity.ui'
 export default {
   name: 'ListPlayer',
-  data () {
-    return {
-      isShowListPlayer: false
-    }
-  },
   components: {
     ScrollView
   },
@@ -96,21 +71,32 @@ export default {
         this.$refs.mode.classList.remove('one')
         this.$refs.mode.classList.add('random')
       }
+    },
+    isShowListPlayer (newValue, oldValue) {
+      if (newValue) {
+        this.$refs.scrollView.refresh()
+      }
     }
   },
   computed: {
     ...mapGetters([
       'isShowMiniPlayer',
       'isPlaying',
-      'modeType'
+      'modeType',
+      'isShowListPlayer',
+      'songs',
+      'currentIndex'
     ])
   },
   methods: {
     ...mapActions([
       'setFullScreen',
       'setMiniPlayer',
+      'setListPlayer',
       'setIsPlaying',
-      'setModeType'
+      'setModeType',
+      'setDelSong',
+      'setCurrentIndex'
     ]),
     play () {
       this.setIsPlaying(!this.isPlaying)
@@ -124,11 +110,17 @@ export default {
         this.setModeType(modeType.loop)
       }
     },
-    show () {
-      this.isShowListPlayer = true
-    },
     hidden () {
-      this.isShowListPlayer = false
+      this.setListPlayer(false)
+    },
+    del (index) {
+      this.setDelSong(index)
+    },
+    delAll () {
+      this.setDelSong()
+    },
+    selectMusic (index) {
+      this.setCurrentIndex(index)
     },
     // 当前执行动画元素，回调
     enter (el, done) {
@@ -195,6 +187,17 @@ export default {
       }
     }
     .player-middle {
+      height: 700px;
+      overflow: hidden;
+      ul{
+        &.active{
+          .item{
+            .item-play{
+              @include bg_img('../../assets/images/small_pause');
+            }
+          }
+        }
+      }
       .item {
         border-top: 1px solid #ccc;
         height: 100px;
@@ -207,14 +210,11 @@ export default {
           width: 70%;
           display: flex;
           align-items: center;
-          .item-play {
+          .item-play{
             width: 56px;
             height: 56px;
             margin-right: 20px;
-            @include bg_img('../../assets/images/small_pause');
-            &.active {
-              @include bg_img('../../assets/images/small_play');
-            }
+            @include bg_img('../../assets/images/small_play');
           }
           p {
             width: 80%;

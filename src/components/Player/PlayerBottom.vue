@@ -15,9 +15,9 @@
       </div>
       <div class="bottom-controll">
         <div class="mode loop" @click="mode" ref="mode"></div>
-        <div class="prev"></div>
+        <div class="prev" @click="prev"></div>
         <div class="play" @click="play" ref="play"></div>
-        <div class="next" ></div>
+        <div class="next" @click="next"></div>
         <div class="favorite"></div>
       </div>
     </div>
@@ -30,18 +30,18 @@ import { formartTime } from '../../tools/tools'
 
 export default {
   name: 'PlayerBottom',
-  // props: {
-  //   totalTime: {
-  //     type: Number,
-  //     default: 0,
-  //     required: true
-  //   },
-  //   currentTime: {
-  //     type: Number,
-  //     default: 0,
-  //     required: true
-  //   }
-  // },
+  props: {
+    totalTime: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
   watch: {
     totalTime (newValue, oldValue) {
       const time = formartTime(newValue)
@@ -78,10 +78,18 @@ export default {
   methods: {
     ...mapActions([
       'setIsPlaying',
-      'setModeType'
+      'setModeType',
+      'setCurrentIndex',
+      'setCurrentTime'
     ]),
     play () {
       this.setIsPlaying(!this.isPlaying)
+    },
+    prev () {
+      this.setCurrentIndex(this.currentIndex - 1)
+    },
+    next () {
+      this.setCurrentIndex(this.currentIndex + 1)
     },
     mode () {
       if (this.modeType === modeType.loop) {
@@ -93,24 +101,27 @@ export default {
       }
     },
     progressClick (e) {
-      // 1. 计算进度条的位置
-      const normalLeft = this.$refs.progressBar.offsetLeft // 进度条的总长
-      const eventLeft = e.pageX // 点击位置的横轴值
+      // 1.计算进度条的位置
+      const normalLeft = e.target.offsetLeft
+      // const normalLeft = this.$refs.progressBar.offsetLeft
+      const eventLeft = e.pageX
       const clickLeft = eventLeft - normalLeft
-      console.log(eventLeft)
+      // let progressWidth = e.target.offsetWidth
       const progressWidth = this.$refs.progressBar.offsetWidth
       const value = clickLeft / progressWidth
       this.$refs.progressLine.style.width = value * 100 + '%'
 
       // 2.计算当前应该从什么地方开始播放
       const currentTime = this.totalTime * value
-      console.log(currentTime)
+      // console.log(currentTime)
+      this.setCurrentTime(currentTime)
     }
   },
   computed: {
     ...mapGetters([
       'isPlaying',
-      'modeType'
+      'modeType',
+      'currentIndex'
     ])
   }
 }
@@ -145,11 +156,11 @@ export default {
         background: #ccc;
         position: relative;
         .progress-dot{
+          position: absolute;
           width: 20px;
           height: 20px;
           border-radius: 50%;
           background: #fff;
-          position: absolute;
           left: 100%;
           top: 50%;
           transform: translateY(-50%);
@@ -183,9 +194,9 @@ export default {
       @include bg_img('../../assets/images/prev')
     }
     .play{
-      @include bg_img('../../assets/images/pause');
+      @include bg_img('../../assets/images/play');
       &.active{
-        @include bg_img('../../assets/images/play');
+        @include bg_img('../../assets/images/pause');
       }
     }
     .next{

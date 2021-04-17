@@ -1,67 +1,20 @@
 <template>
   <swiper :options="swiperOption" class="banner">
+    <!-- slides -->
     <swiper-slide class="cd">
       <div class="cd-wrapper" ref="cdWrapper">
-        <img src="https://p1.music.126.net/DOZHRkXE1sZCM6mWCky5KQ==/109951165188090916.jpg" alt="">
+        <img :src="currentSong.picUrl" alt="">
       </div>
-      <p>such a big surprise</p>
+      <p>{{getFirstLyric()}}</p>
     </swiper-slide>
-    <swiper-slide class="lyric">
+    <swiper-slide class="lyric" ref="lyric">
       <ScrollView ref="scrollView">
         <ul>
-          <li>我是第1个li</li>
-          <li>我是第2个li</li>
-          <li>我是第3个li</li>
-          <li>我是第4个li</li>
-          <li>我是第5个li</li>
-          <li>我是第6个li</li>
-          <li>我是第7个li</li>
-          <li>我是第8个li</li>
-          <li>我是第9个li</li>
-          <li>我是第10个li</li>
-          <li>我是第11个li</li>
-          <li>我是第12个li</li>
-          <li>我是第13个li</li>
-          <li>我是第14个li</li>
-          <li>我是第15个li</li>
-          <li>我是第16个li</li>
-          <li>我是第17个li</li>
-          <li>我是第18个li</li>
-          <li>我是第19个li</li>
-          <li>我是第20个li</li>
-          <li>我是第21个li</li>
-          <li>我是第22个li</li>
-          <li>我是第23个li</li>
-          <li>我是第24个li</li>
-          <li>我是第25个li</li>
-          <li>我是第26个li</li>
-          <li>我是第27个li</li>
-          <li>我是第28个li</li>
-          <li>我是第29个li</li>
-          <li>我是第30个li</li>
-          <li>我是第31个li</li>
-          <li>我是第32个li</li>
-          <li>我是第33个li</li>
-          <li>我是第34个li</li>
-          <li>我是第35个li</li>
-          <li>我是第36个li</li>
-          <li>我是第37个li</li>
-          <li>我是第38个li</li>
-          <li>我是第39个li</li>
-          <li>我是第40个li</li>
-          <li>我是第41个li</li>
-          <li>我是第42个li</li>
-          <li>我是第43个li</li>
-          <li>我是第44个li</li>
-          <li>我是第45个li</li>
-          <li>我是第46个li</li>
-          <li>我是第47个li</li>
-          <li>我是第48个li</li>
-          <li>我是第49个li</li>
-          <li>我是第50个li</li>
+          <li v-for="(value, key) in currentLyric" :key="key" :class="{'active' : currentLineNum === key}">{{value}}</li>
         </ul>
       </ScrollView>
     </swiper-slide>
+    <!-- Optional controls -->
     <div class="swiper-pagination"  slot="pagination"></div>
   </swiper>
 </template>
@@ -97,8 +50,30 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isPlaying'
+      'isPlaying',
+      'currentSong',
+      'currentLyric',
+      'currentIndex'
     ])
+  },
+  methods: {
+    getFirstLyric () {
+      for (const key in this.currentLyric) {
+        return this.currentLyric[key]
+      }
+    },
+    getActiveLineNum (lineNum) {
+      if (lineNum < 0) {
+        return this.currentLineNum
+      }
+      const result = this.currentLyric[lineNum + '']
+      if (result === undefined || result === '') {
+        lineNum--
+        return this.getActiveLineNum(lineNum)
+      } else {
+        return lineNum + ''
+      }
+    }
   },
   watch: {
     isPlaying (newValue, oldValue) {
@@ -107,6 +82,26 @@ export default {
       } else {
         this.$refs.cdWrapper.classList.remove('active')
       }
+    },
+    currentTime (newValue, oldValue) {
+      // 1.高亮歌词同步
+      const lineNum = Math.floor(newValue)
+      this.currentLineNum = this.getActiveLineNum(lineNum)
+      // 2.歌词滚动同步
+      const currentLyricTop = document.querySelector('.lyric .active').offsetTop
+      const lyricHeight = this.$refs.lyric.$el.offsetHeight
+      if (currentLyricTop > lyricHeight / 2) {
+        this.$refs.scrollView.scrollTo(0, lyricHeight / 2 - currentLyricTop, 100)
+      } else {
+        this.$refs.scrollView.scrollTo(0, 0, 100)
+      }
+    }
+  },
+  props: {
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
     }
   }
 }

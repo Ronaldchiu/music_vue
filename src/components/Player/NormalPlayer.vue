@@ -8,11 +8,11 @@
     <div class="normal-player" v-show="this.isFullScreen">
       <div class="player-wrapper">
         <PlayerHeader></PlayerHeader>
-        <PlayerMiddle></PlayerMiddle>
-        <PlayerBottom></PlayerBottom>
+        <PlayerMiddle :currentTime="currentTime"></PlayerMiddle>
+        <PlayerBottom :totalTime="totalTime" :currentTime="currentTime"></PlayerBottom>
       </div>
       <div class="player-bg">
-        <img src="https://p1.music.126.net/DOZHRkXE1sZCM6mWCky5KQ==/109951165188090916.jpg" alt="">
+        <img :src="currentSong.picUrl" alt="">
       </div>
     </div>
   </transition>
@@ -22,7 +22,7 @@
 import PlayerHeader from './PlayerHeader'
 import PlayerMiddle from './PlayerMiddle'
 import PlayerBottom from './PlayerBottom'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Velocity from 'velocity-animate'
 import 'velocity-animate/velocity.ui'
 export default {
@@ -34,10 +34,26 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isFullScreen'
+      'isFullScreen',
+      'currentSong'
     ])
   },
+  props: {
+    totalTime: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    currentTime: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
   methods: {
+    ...mapActions([
+      'getSongLyric'
+    ]),
     // 当前执行动画元素，回调
     enter (el, done) {
       Velocity(el, 'transition.shrinkIn', { duration: 500 }, function () {
@@ -48,6 +64,14 @@ export default {
       Velocity(el, 'transition.shrinkOut', { duration: 500 }, function () {
         done()
       })
+    }
+  },
+  watch: {
+    currentSong (newValue, oldValue) {
+      if (newValue.id === undefined) {
+        return
+      }
+      this.getSongLyric(newValue.id)
     }
   }
 }

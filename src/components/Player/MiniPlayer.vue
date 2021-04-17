@@ -7,10 +7,10 @@
     <div class="mini-player" v-show="isShowMiniPlayer">
       <div class="player-wrapper">
         <div class="player-left" @click.stop="showNormalPlayer">
-          <img src="https://p1.music.126.net/DOZHRkXE1sZCM6mWCky5KQ==/109951165188090916.jpg" alt="" ref="playerWrapper">
+          <img :src="currentSong.picUrl" alt="" ref="playerWrapper">
           <div class="player-title">
-            <h3>演员</h3>
-            <p>薛之谦</p>
+            <h3>{{currentSong.name}}</h3>
+            <p>{{currentSong.singer}}</p>
           </div>
         </div>
         <div class="player-right">
@@ -42,15 +42,20 @@ export default {
   computed: {
     ...mapGetters([
       'isShowMiniPlayer',
-      'isPlaying'
+      'isPlaying',
+      'currentSong'
     ])
   },
   methods: {
     ...mapActions([
       'setFullScreen',
       'setMiniPlayer',
+      'setListPlayer',
       'setIsPlaying'
     ]),
+    showList () {
+      this.setListPlayer(true)
+    },
     play () {
       this.setIsPlaying(!this.isPlaying)
     },
@@ -68,9 +73,6 @@ export default {
       Velocity(el, 'transition.bounceDownOut', { duration: 500 }, function () {
         done()
       })
-    },
-    showList () {
-      this.$emit('showList')
     }
   }
 }
@@ -128,9 +130,9 @@ export default {
       .play{
         width: 84px;
         height: 84px;
-        @include bg_img('../../assets/images/pause');
+        @include bg_img('../../assets/images/play');
         &.active {
-          @include bg_img('../../assets/images/play');
+          @include bg_img('../../assets/images/pause');
         }
       }
       .list{
