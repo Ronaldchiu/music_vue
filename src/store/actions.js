@@ -42,6 +42,7 @@ export default {
     result.songs.forEach(function (value, i) {
       const obj = {}
       // obj.url = urls.data[i].url
+      // 歌词与版本不对版bug解决方案
       for (let j = 0; j < urls.data.length; j++) {
         const item = urls.data[j]
         if (value.id === item.id) {

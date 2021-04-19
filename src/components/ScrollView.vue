@@ -1,7 +1,7 @@
 <template>
-    <div id="wrapper" ref="wrapper">
-        <slot></slot>
-    </div>
+  <div id="wrapper" ref="wrapper">
+    <slot></slot>
+  </div>
 </template>
 
 <script>
@@ -46,6 +46,7 @@ export default {
     observer.observe(this.$refs.wrapper, config)
   },
   methods: {
+    // 提供一个监听滚动距离的方法给外界使用
     scrolling (fn) {
       this.iscroll.on('scroll', function () {
         fn(this.y)
@@ -55,12 +56,15 @@ export default {
       setTimeout(() => {
         this.iscroll.refresh()
       }, 100)
+    },
+    scrollTo (x, y, time) {
+      this.iscroll.scrollTo(x, y, time)
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 #wrapper{
   width: 100%;
   height: 100%;

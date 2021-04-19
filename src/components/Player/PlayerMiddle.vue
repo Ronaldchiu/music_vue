@@ -95,6 +95,12 @@ export default {
       } else {
         this.$refs.scrollView.scrollTo(0, 0, 100)
       }
+    },
+    currentLyric (newValue, oldValue) {
+      for (const key in newValue) {
+        this.currentLineNum = key
+        return
+      }
     }
   },
   props: {
