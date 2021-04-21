@@ -16,6 +16,11 @@ export default {
   components: {
     Header
   },
+  data () {
+    return {
+      switchNum: 0
+    }
+  },
   methods: {
     back () {
       window.history.back()
@@ -28,7 +33,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
   @import "../../assets/css/variable";
   @import "../../assets/css/mixin";
 .header{
