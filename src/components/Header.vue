@@ -1,9 +1,21 @@
 <template>
-<div class="header" @click="changeTheme">
-  <div class="left"></div>
-  <div class="container">网易云音乐</div>
-  <div class="right"></div>
-</div>
+   <!--
+    <div class="header" @click="changeTheme">
+      <div class="header-left"></div>
+      <p class="header-title">知播渔音乐</p>
+      <div class="header-right" @click.stop="accountClick"></div>
+    </div>
+    -->
+  <div class="header" @click="changeTheme">
+    <!--注意点: 不能直接插槽设置样式-->
+    <div class="left">
+      <slot name="left">左边</slot>
+    </div>
+    <slot name="center">中间</slot>
+    <div class="right">
+      <slot name="right">右边</slot>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -27,34 +39,23 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-@import "../assets/css/variable";
-@import "../assets/css/mixin";
-.header {
-  display: flex;
-  justify-content: space-between;
+  @import "../assets/css/variable";
+  @import "../assets/css/mixin";
+.header{
   width: 100%;
   height: 100px;
   @include bg_color();
-  .left {
+  display: flex;
+  justify-content: space-between;
+  .left, .right{
     width: 84px;
     height: 84px;
     margin-top: 8px;
-    @include bg_img('../assets/images/logo');
-  }
-  .right{
-    width: 84px;
-    height: 84px;
-    @include bg_img('../assets/images/account');
-    margin-top: 8px;
-  }
-  .container {
-    @include font_size($font_small);
-    text-align: center;
-    line-height: 100px;
-    color: #ffffff;
-    font-weight: bold;
+    *{
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 </style>

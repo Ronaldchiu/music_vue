@@ -31,6 +31,11 @@ const Singer = (resolve) => {
     resolve(module)
   })
 }
+const Account = (reslove) => {
+  import('../views/Account.vue').then((module) => {
+    reslove(module)
+  })
+}
 Vue.use(VueRouter)
 
 const routes = [
@@ -47,7 +52,8 @@ const routes = [
     ]
   },
   { path: '/search', component: Search },
-  { path: '/singer', component: Singer }
+  { path: '/singer', component: Singer },
+  { path: '/account', component: Account }
 ]
 
 const router = new VueRouter({
