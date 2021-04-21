@@ -3,7 +3,7 @@
       <NormalPlayer :totalTime="totalTime" :currentTime="currentTime"></NormalPlayer>
       <MiniPlayer></MiniPlayer>
       <ListPlayer></ListPlayer>
-      <audio  :src="currentSong.url" ref="audio" @timeupdate="timeupdate" @ended="end"></audio>
+      <audio :src="currentSong.url" ref="audio" @timeupdate="timeupdate" @ended="end"></audio>
     </div>
 </template>
 
@@ -30,17 +30,18 @@ export default {
       'curTime',
       'modeType',
       'songs',
-      'favoriteList'
+      'favoriteList',
+      'historyList'
     ])
   },
   methods: {
     ...mapActions([
       'setCurrentIndex',
       'setFavoriteList',
-      'setHistorySong'
+      'setHistorySong',
+      'setHistoryList'
     ]),
     timeupdate (e) {
-      // console.log(e.target.currentTime)
       this.currentTime = e.target.currentTime
     },
     end () {
@@ -57,6 +58,7 @@ export default {
   watch: {
     isPlaying (newValue, oldValue) {
       if (newValue) {
+        this.setHistorySong(this.currentSong)
         this.$refs.audio.play()
       } else {
         this.$refs.audio.pause()
@@ -74,6 +76,7 @@ export default {
         console.log('执行了2')
         this.totalTime = this.$refs.audio.duration
         if (this.isPlaying) {
+          this.setHistorySong(this.currentSong)
           this.$refs.audio.play()
         } else {
           this.$refs.audio.pause()
@@ -84,14 +87,20 @@ export default {
       this.$refs.audio.currentTime = newValue
     },
     favoriteList (newValue, oldValue) {
-      // window.localStorage.setItem('favoriteList', JSON.stringify(newValue))
       setLocalStorage('favoriteList', newValue)
+    },
+    historyList (newValue, oldValue) {
+      setLocalStorage('historyList', newValue)
     }
   },
   created () {
     const favoriteList = getLocalStorage('favoriteList')
     if (favoriteList === null) { return }
     this.setFavoriteList(favoriteList)
+
+    const historyList = getLocalStorage('historyList')
+    if (historyList === null) { return }
+    this.setHistoryList(historyList)
   },
   mounted () {
     this.$refs.audio.ondurationchange = () => {

@@ -1,9 +1,9 @@
-export const getRandomIntInclusive = (min, max) => {
+export const getRandomIntInclusive = (min, max) => { // 获取随机数
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min // 含最大值，含最小值
 }
-export const formartTime = (time) => {
+export const formartTime = (time) => { // 格式化歌词
   // 2.得到两个时间之间的差值(秒)
   const differSecond = time
   // 3.利用相差的总秒数 / 每一天的秒数 = 相差的天数
@@ -25,9 +25,9 @@ export const formartTime = (time) => {
     second: second
   }
 }
-export const setLocalStorage = (key, value) => {
+export const setLocalStorage = (key, value) => { // 存值
   window.localStorage.setItem(key, JSON.stringify(value))
 }
-export const getLocalStorage = (key) => {
+export const getLocalStorage = (key) => { // 取值
   return JSON.parse(window.localStorage.getItem(key))
 }
