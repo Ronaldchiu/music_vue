@@ -40,7 +40,16 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', redirect: '/recommend' }, // 默认为/recommend，导入Recommend组件
-  { path: '/rank', component: Rank },
+  {
+    path: '/rank',
+    component: Rank,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        component: Detail
+      }
+    ]
+  },
   {
     path: '/recommend',
     component: Recommend,
@@ -52,7 +61,16 @@ const routes = [
     ]
   },
   { path: '/search', component: Search },
-  { path: '/singer', component: Singer },
+  {
+    path: '/singer',
+    component: Singer,
+    children: [
+      {
+        path: 'detail/:id/:type',
+        component: Detail
+      }
+    ]
+  },
   { path: '/account', component: Account }
 ]
 

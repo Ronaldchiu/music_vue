@@ -3,7 +3,7 @@
 <div class="header" @click="changeTheme">
   <div class="left" @click.stop="back"></div>
   <div class="container">{{title}}</div>
-  <div class="right"></div>
+  <div class="right" @click.stop="accountClick"></div>
 </div>
 </template>
 
@@ -33,6 +33,9 @@ export default {
     },
     back () {
       window.history.back()
+    },
+    accountClick () {
+      this.$router.push('/account')
     }
   }
 }
